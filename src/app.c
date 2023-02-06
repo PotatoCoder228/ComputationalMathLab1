@@ -7,5 +7,5 @@
 
 int app_start(){
     println(STRING, "Добро пожаловать в консольное приложение.");
-
+    return 0;
 }

@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include "../../headers/utils/printer.h"
+#include "../../include/utils/printer.h"
 
 void println(enum printer_modes mode, void* arg){
     printf(printer_mode[mode], arg);
