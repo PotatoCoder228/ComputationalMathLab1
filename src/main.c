@@ -1,7 +1,7 @@
-#include <stdio.h>
+#include <stdlib.h>
 #include "../include/app.h"
 
 int main() {
     app_start();
-    return 0;
+    return EXIT_SUCCESS;
 }

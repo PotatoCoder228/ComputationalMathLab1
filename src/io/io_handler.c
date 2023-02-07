@@ -1,10 +1,22 @@
 //
 // Created by potato_coder on 06.02.23.
 //
-
-#include <bits/types/FILE.h>
 #include "../../include/io/io_handler.h"
 
-int open_file(FILE** stream, char* filename){
+void open_file(FILE **stream, char *filename, enum open_file_modes mode, error_s *error) {
+    *stream = fopen(filename, open_file_modes[mode]);
+    if (*stream == NULL) {
+        throw_exception(error, errno, strerror(errno));
+    } else {
+        error_set_default(error);
+    }
+}
 
+void close_file(FILE **stream, error_s *error) {
+    int status = fclose(*stream);
+    if (status) {
+        throw_exception(error, errno, strerror(errno));
+    } else {
+        error_set_default(error);
+    }
 }
