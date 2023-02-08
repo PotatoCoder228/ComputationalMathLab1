@@ -21,6 +21,10 @@ static char *printer_mode[] = {
         "%s", "%c", "%d", "%ld", "lf"
 };
 
+void print(enum printer_modes mode, void *arg);
+
+void print_to(FILE *stream, enum printer_modes mode, void *arg);
+
 void println(enum printer_modes mode, void *arg);
 
 void println_to(FILE *stream, enum printer_modes mode, void *arg);
