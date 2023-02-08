@@ -11,7 +11,10 @@ typedef struct linked_list {
 } linked_list;
 
 void *linked_list_get_node_value(linked_list *list) {
-    return list->value;
+    if (list != NULL) {
+        return list->value;
+    }
+    return NULL;
 }
 
 void linked_list_set_node_value(linked_list *list, void *value, bool in_heap) {
@@ -22,22 +25,29 @@ void linked_list_set_node_value(linked_list *list, void *value, bool in_heap) {
 }
 
 linked_list *linked_list_get_node_next(linked_list *list) {
-    return list->next;
+    if (list != NULL) {
+        return list->next;
+    }
+    return NULL;
 }
 
 void linked_list_set_node_next(linked_list *list, linked_list *next) {
-    list->next = next;
+    if (list != NULL) {
+        list->next = next;
+    }
 }
 
 void linked_list_destroy(linked_list *list) {
-    linked_list *buffer;
-    while (list != NULL) {
-        buffer = list;
-        list = list->next;
-        if (buffer->value_in_heap == true) {
-            free(buffer->value);
+    if (list != NULL) {
+        linked_list *buffer;
+        while (list != NULL) {
+            buffer = list;
+            list = list->next;
+            if (buffer->value_in_heap == true) {
+                free(buffer->value);
+            }
+            free(buffer);
         }
-        free(buffer);
     }
 }
 
@@ -84,19 +94,19 @@ void *linked_list_get_last(linked_list *node) {//OK
     return NULL;
 }
 
-int linked_list_push(linked_list *node, void *value, bool in_heap) {//OK
+bool linked_list_push(linked_list *node, void *value, bool in_heap, error_s *error) {//OK
     if (node != NULL) {
         node = get_last_node(node);
         if (node == NULL) {
-            return -1;
+            return false;
         }
         linked_list *add_node = linked_list_node_constructor();
         add_node->value = value;
         node->next = add_node;
         add_node->value_in_heap = in_heap;
-        return 0;
+        return true;
     }
-    return -1;
+    return false;
 }
 
 void *linked_list_pop(linked_list *node) {//OK
@@ -116,25 +126,28 @@ void *linked_list_pop(linked_list *node) {//OK
     return NULL;
 }
 
-int linked_list_add_last(linked_list *node, void *value, bool in_heap) {//OK
+bool linked_list_add_last(linked_list *node, void *value, bool in_heap) {//OK
     if (node != NULL) {
         node = get_last_node(node);
         if (node == NULL) {
-            return -1;
+            return false;
         }
         linked_list *add_node = linked_list_node_constructor();
         add_node->value = value;
         node->next = add_node;
         add_node->value_in_heap = in_heap;
-        return 0;
+        return true;
     }
-    return -1;
+    return false;
 }
 
-int linked_list_add_first(linked_list **node, void *value, bool in_heap) {//OK
+bool linked_list_add_first(linked_list **node, void *value, bool in_heap) {//OK
+    if (node == NULL) {
+        return false;
+    }
     linked_list *new_node = linked_list_node_constructor();
     if (new_node == NULL) {
-        return -1;
+        return false;
     }
     new_node->value = value;
     new_node->value_in_heap = in_heap;
@@ -148,7 +161,7 @@ int linked_list_add_first(linked_list **node, void *value, bool in_heap) {//OK
     } else {
         *node = new_node;
     }
-    return 0;
+    return true;
 }
 
 size_t linked_list_get_size(linked_list *node) {
@@ -161,6 +174,9 @@ size_t linked_list_get_size(linked_list *node) {
 }
 
 void *linked_list_get(linked_list *node, size_t index) {
+    if (node == NULL) {
+        return NULL;
+    }
     size_t list_size = linked_list_get_size(node);
     if (index > list_size) {
         return NULL;
@@ -171,10 +187,13 @@ void *linked_list_get(linked_list *node, size_t index) {
     return node->value;
 }
 
-int linked_list_insert(linked_list **node, size_t index, void *value, bool in_heap) {
+bool linked_list_insert(linked_list **node, size_t index, void *value, bool in_heap) {
+    if (node == NULL) {
+        return false;
+    }
     size_t list_size = linked_list_get_size(*node);
     if (index > list_size) {
-        return -1;
+        return false;
     }
     linked_list *new_node = linked_list_node_constructor();
     if (new_node != NULL) {
@@ -183,7 +202,7 @@ int linked_list_insert(linked_list **node, size_t index, void *value, bool in_he
             new_node->value = value;
             new_node->next = *node;
             *node = new_node;
-            return 0;
+            return true;
         }
         new_node->value = value;
         for (size_t i = 1; i < index; i++) {
@@ -191,33 +210,31 @@ int linked_list_insert(linked_list **node, size_t index, void *value, bool in_he
         }
         new_node->next = (*node)->next;
         (*node)->next = new_node;
-        return 0;
+        return true;
     }
-    return -1;
+    return false;
 }
 
-void print_linked_list(FILE *stream, enum printer_modes mode, linked_list *list) {//OK
+void iterator(linked_list* list, void ){
+
+}
+
+void linked_list_print(FILE *stream, enum printer_modes mode, linked_list *list,
+                       void (printer)(FILE *, enum printer_modes, void *)) {//OK
     if (stream != NULL && list != NULL) {
         size_t counter = 0;
-        print_to(stream, STRING, "\n[");
+        printer(stream, STRING, "\n[");
         while (list != NULL) {
             fprintf(stream, printer_mode[mode], list->value);
             counter += 1;
             list = list->next;
             if (list != NULL) {
-                print_to(stream, STRING, ", ");
+                printer(stream, STRING, ", ");
             }
             if (counter % 10 == 0) {
-                print_to(stream, STRING, "\n");
+                printer(stream, STRING, "\n");
             }
         }
-        print_to(stream, STRING, "]\n");
+        printer(stream, STRING, "]\n");
     }
-}
-
-int linked_list_clone(linked_list *list, linked_list **clone) {//TODO дописать клонирование и итератор по списку
-    if (list != NULL) {
-        //код копирования связного списка тута
-    }
-    return -1;
 }

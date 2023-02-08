@@ -65,3 +65,10 @@ void string_builder_destroy(string_builder *builder) {
     free(string_builder_get_string(builder));
     free(builder);
 }
+
+bool string_builder_equals(string_builder *builder_1, string_builder *builder_2) {
+    if (strcmp(builder_1->string, builder_2->string) != 0) {
+        return false;
+    }
+    return true;
+}

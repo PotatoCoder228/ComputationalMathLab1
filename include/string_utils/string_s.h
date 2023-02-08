@@ -24,4 +24,6 @@ void string_builder_destroy(string_builder *builder);
 
 bool string_builder_concat(string_builder *main, string_builder *from);
 
+bool string_builder_equals(string_builder *builder_1, string_builder *builder_2);
+
 #endif //COUNTMATHLAB1_STRING_S_H

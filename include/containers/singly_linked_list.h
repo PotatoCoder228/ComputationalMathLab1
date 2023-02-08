@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../../include/utils/printer.h"
+#include "../exceptions/exceptions.h"
 
 typedef struct linked_list linked_list;
 
@@ -29,11 +30,11 @@ void *linked_list_get_last(linked_list *node);
 
 void *linked_list_pop(linked_list *node);
 
-int linked_list_push(linked_list *node, void *value, bool in_heap);
+bool linked_list_push(linked_list *node, void *value, bool in_heap, error_s *error);
 
-int linked_list_add_last(linked_list *node, void *value, bool in_heap);
+bool linked_list_add_last(linked_list *node, void *value, bool in_heap);
 
-int linked_list_add_first(linked_list **node, void *value, bool in_heap);
+bool linked_list_add_first(linked_list **node, void *value, bool in_heap);
 
 size_t linked_list_get_size(linked_list *node);
 
@@ -41,11 +42,10 @@ void *linked_list_get(linked_list *node, size_t index);
 
 void linked_list_destroy(linked_list *list);
 
-int linked_list_clone(linked_list *list, linked_list **clone);
+void linked_list_print(FILE *stream, enum printer_modes mode, linked_list *list,
+                       void (printer)(FILE *, enum printer_modes, void *));
 
-void print_linked_list(FILE *stream, enum printer_modes mode, linked_list *list);
-
-int linked_list_insert(linked_list **node, size_t index, void *value, bool in_heap);
+bool linked_list_insert(linked_list **node, size_t index, void *value, bool in_heap);
 
 
 #endif //COUNTMATHLAB1_SINGLY_LINKED_LIST_H

@@ -11,8 +11,8 @@ int app_start() {
     void *num1 = (void *) 2224;
     linked_list *list = linked_list_init(num, false);
     linked_list_add_first(&list, num1, false);
-    print_linked_list(stdout, SIGN_INT, list);
-    print_linked_list(stdout, SIGN_INT, list);
+    linked_list_print(stdout, SIGN_INT, list, print_to);
+    linked_list_print(stdout, SIGN_INT, list, print_to);
     linked_list_destroy(list);
     return 0;
 }
