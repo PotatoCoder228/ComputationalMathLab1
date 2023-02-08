@@ -30,7 +30,7 @@ void *linked_list_get_last(linked_list *node);
 
 void *linked_list_pop(linked_list *node);
 
-bool linked_list_push(linked_list *node, void *value, bool in_heap, error_s *error);
+bool linked_list_push(linked_list *node, void *value, bool in_heap);
 
 bool linked_list_add_last(linked_list *node, void *value, bool in_heap);
 

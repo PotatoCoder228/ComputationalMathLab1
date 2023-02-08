@@ -94,7 +94,7 @@ void *linked_list_get_last(linked_list *node) {//OK
     return NULL;
 }
 
-bool linked_list_push(linked_list *node, void *value, bool in_heap, error_s *error) {//OK
+bool linked_list_push(linked_list *node, void *value, bool in_heap) {//OK
     if (node != NULL) {
         node = get_last_node(node);
         if (node == NULL) {
