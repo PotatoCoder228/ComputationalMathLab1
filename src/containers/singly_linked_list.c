@@ -215,8 +215,13 @@ bool linked_list_insert(linked_list **node, size_t index, void *value, bool in_h
     return false;
 }
 
-void iterator(linked_list* list, void ){
+typedef void* (*callback)(void* data);
 
+void iterator(linked_list* list, callback iter_func){
+    while(list != NULL){
+        iter_func(list);
+        list = list->next;
+    }
 }
 
 void linked_list_print(FILE *stream, enum printer_modes mode, linked_list *list,
