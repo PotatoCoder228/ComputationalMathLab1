@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../../include/utils/printer.h"
+#include "../utils/printer.h"
 #include "../exceptions/exceptions.h"
 
 typedef struct linked_list linked_list;

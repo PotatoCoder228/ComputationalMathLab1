@@ -11,6 +11,11 @@ typedef struct string_builder {
 
 string_builder *new_string_builder() {
     string_builder *builder = malloc(sizeof(string_builder));
+    if(builder != NULL) {
+        builder->string = malloc(sizeof(char));
+        (builder->string)[0] = '\0';
+        builder->size = strlen(builder->string);
+    }
     return builder;
 }
 
@@ -48,15 +53,13 @@ void string_builder_copy(string_builder *src, string_builder *dest) {
 
 bool string_builder_concat(string_builder *main, string_builder *from) {
     if (main != NULL && from != NULL) {
-        if (main->size != 0 && from->size != 0) {
-            main->string = realloc(main->string, (main->size) + (from->size));
+            main->string = realloc(main->string, (main->size) + (from->size) + 1);
             if (main->string != NULL) {
                 strcat(main->string, from->string);
+                main->size = strlen(main->string);
                 return true;
             }
             return false;
-        }
-        return false;
     }
     return false;
 }

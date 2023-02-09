@@ -1,0 +1,8 @@
+//
+// Created by potato_coder on 09.02.23.
+//
+
+#ifndef COUNTMATHLAB1_LIN_EQ_SOLVER_H
+#define COUNTMATHLAB1_LIN_EQ_SOLVER_H
+
+#endif //COUNTMATHLAB1_LIN_EQ_SOLVER_H
