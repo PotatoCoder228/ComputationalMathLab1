@@ -12,6 +12,7 @@
  * Для этого есть обёртка string_builder, которая позволяет последовательно добавлять символы
  * из потока ввода.
  * */
+
 string_builder *read_command(error_s *error) { //TODO "включить" обработку ошибок
     print(STRING, "Введите команду:");
     string_builder *command = new_string_builder();
@@ -41,9 +42,10 @@ string_builder *read_command(error_s *error) { //TODO "включить" обр�
 }
 
 bool console(error_s *error) {
-    string_builder *command = read_command(error);
-    if (command == NULL) return false;//err
-    linked_list *tokens_list = string_builder_get_token_list(command, " \t");
-    //linked_list_print(stdout, STRING, tokens_list, string_builder_print_to); IS OK!
+    string_builder *string_command = read_command(error);
+    if (string_command == NULL) return false;//err
+    linked_list *tokens_list = string_builder_get_token_list(string_command, " \t");
+    //linked_list_print(stdout, STRING, tokens_list, string_builder_print_to);
+    user_command *command;
     return true;
 }

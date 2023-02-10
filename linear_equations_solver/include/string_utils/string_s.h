@@ -29,7 +29,7 @@ bool string_builder_concat(string_builder *main, string_builder *from);
 
 bool string_builder_equals(string_builder *builder_1, string_builder *builder_2);
 
-linked_list* string_builder_get_token_list(string_builder *string, char *sep);
+linked_list *string_builder_get_token_list(string_builder *string, char *sep);
 
 void string_builder_print_to(FILE *stream, enum printer_modes mode, void *arg);
 

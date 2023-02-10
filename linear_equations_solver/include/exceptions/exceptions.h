@@ -15,9 +15,9 @@ typedef struct error_s error_s;
 
 error_s *new_error();
 
-void error_set_message(error_s *error, string_builder* message);
+void error_set_message(error_s *error, string_builder *message);
 
-string_builder* error_get_message(error_s *error);
+string_builder *error_get_message(error_s *error);
 
 void error_set_code(error_s *error, int code);
 
