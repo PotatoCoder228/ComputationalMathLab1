@@ -10,6 +10,6 @@
 #include "../include/containers/singly_linked_list.h"
 #include "../include/console/console.h"
 
-int app_start(error_s* error);
+int app_start(error_s *error);
 
 #endif //COUNTMATHLAB1_APP_H

@@ -3,7 +3,7 @@
 //
 #include "../include/app.h"
 
-void print_greeting(){
+void print_greeting() {
     println(STRING, "████──████──███──████──███──████──████──████──████───███──████──████──████──████\n"
                     "█──█──█──█───█───█──█───█───█──█──█──█──█──█──█──██──█────█──█──█──█──█──█──█──█\n"
                     "████──█──█───█───████───█───█──█──█─────█──█──█──██──███──████────██────██──████\n"
@@ -13,7 +13,7 @@ void print_greeting(){
     println(STRING, "\nДобро пожаловать в консольное приложение.");
 }
 
-int app_start(error_s* error) {
+int app_start(error_s *error) {
     print_greeting();
     console(error);
     return 0;

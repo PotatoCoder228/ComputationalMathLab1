@@ -59,8 +59,8 @@ void error_set_default(error_s *error) {
     error_set_message(error, builder);
 }
 
-void error_destroy(error_s *error) {
-    string_builder_destroy(error_get_message(error));
-    free(error);
+void error_destroy(void *error) {
+    string_builder_destroy((void *) error_get_message((error_s *) error));
+    free((error_s *) error);
 }
 

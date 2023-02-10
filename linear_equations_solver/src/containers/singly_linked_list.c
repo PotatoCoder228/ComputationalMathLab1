@@ -37,14 +37,14 @@ void linked_list_set_node_next(linked_list *list, linked_list *next) {
     }
 }
 
-void linked_list_destroy(linked_list *list) {
+void linked_list_destroy(linked_list *list, void (*destroyer)(void *data)) {
     if (list != NULL) {
         linked_list *buffer;
         while (list != NULL) {
             buffer = list;
             list = list->next;
             if (buffer->value_in_heap == true) {
-                free(buffer->value);
+                destroyer(buffer->value);
             }
             free(buffer);
         }
@@ -215,10 +215,10 @@ bool linked_list_insert(linked_list **node, size_t index, void *value, bool in_h
     return false;
 }
 
-typedef void* (*callback)(void* data);
+typedef void *(*callback)(void *data);
 
-void iterator(linked_list* list, callback iter_func){
-    while(list != NULL){
+void iterator(linked_list *list, callback iter_func) {
+    while (list != NULL) {
         iter_func(list);
         list = list->next;
     }
@@ -228,18 +228,18 @@ void linked_list_print(FILE *stream, enum printer_modes mode, linked_list *list,
                        void (printer)(FILE *, enum printer_modes, void *)) {//OK
     if (stream != NULL && list != NULL) {
         size_t counter = 0;
-        printer(stream, STRING, "\n[");
+        print_to(stream, STRING, "\n[");
         while (list != NULL) {
-            fprintf(stream, printer_mode[mode], list->value);
+            printer(stream, mode, list->value);
             counter += 1;
             list = list->next;
             if (list != NULL) {
-                printer(stream, STRING, ", ");
+                print_to(stream, STRING, ", ");
             }
             if (counter % 10 == 0) {
-                printer(stream, STRING, "\n");
+                print_to(stream, STRING, "\n");
             }
         }
-        printer(stream, STRING, "]\n");
+        println_to(stream, STRING, "]\n");
     }
 }

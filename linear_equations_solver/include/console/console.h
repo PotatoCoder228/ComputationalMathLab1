@@ -4,9 +4,11 @@
 
 #ifndef COUNTMATHLAB1_CONSOLE_H
 #define COUNTMATHLAB1_CONSOLE_H
+
 #include <stdbool.h>
 #include "../exceptions/exceptions.h"
+#include "../../include/containers/singly_linked_list.h"
 
-bool console(error_s* error);
+bool console(error_s *error);
 
 #endif //COUNTMATHLAB1_CONSOLE_H

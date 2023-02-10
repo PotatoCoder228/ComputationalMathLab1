@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../utils/printer.h"
-#include "../exceptions/exceptions.h"
 
 typedef struct linked_list linked_list;
 
@@ -40,7 +39,7 @@ size_t linked_list_get_size(linked_list *node);
 
 void *linked_list_get(linked_list *node, size_t index);
 
-void linked_list_destroy(linked_list *list);
+void linked_list_destroy(linked_list *list, void (*destroyer)(void *data));
 
 void linked_list_print(FILE *stream, enum printer_modes mode, linked_list *list,
                        void (printer)(FILE *, enum printer_modes, void *));

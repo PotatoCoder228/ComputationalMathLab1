@@ -5,7 +5,6 @@
 #ifndef COUNTMATHLAB1_PRINTER_H
 #define COUNTMATHLAB1_PRINTER_H
 
-#include "../string_utils/string_s.h"
 #include <bits/types/FILE.h>
 #include <stdio.h>
 
