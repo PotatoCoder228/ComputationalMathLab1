@@ -76,12 +76,12 @@ bool string_builder_equals(string_builder *builder_1, string_builder *builder_2)
     return true;
 }
 
-linked_list *string_builder_get_token_list(string_builder *string, char *sep) {
+linked_list *string_builder_get_token_list(string_builder *string, char *sep, size_t counts) {
     linked_list *result = NULL;
     char *buf;
     string_builder *token;
     buf = strtok(string->string, sep);
-    for (size_t i = 0; buf != NULL; i++) {
+    for (size_t i = 0; (i < counts) && buf != NULL; i++) {
         token = new_string_builder();
         if (token == NULL) {
             return NULL;

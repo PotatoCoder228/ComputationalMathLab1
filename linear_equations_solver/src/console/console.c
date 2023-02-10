@@ -13,22 +13,27 @@
  * из потока ввода.
  * */
 
-string_builder *read_command(error_s *error) { //TODO "включить" обработку ошибок
-    print(STRING, "Введите команду:");
+string_builder *read_string(error_s *error) { //TODO "включить" обработку ошибок
     string_builder *command = new_string_builder();
-    if (command == NULL) return NULL;//err
+    if (command == NULL) {
+        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под string_builder.");
+        return NULL;
+    }
     string_builder *buffer = new_string_builder();
-    if (buffer == NULL) return NULL;//err
+    if (buffer == NULL) {
+        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под string_builder.");
+        return NULL;//err
+    }
     char *character = malloc(sizeof(char));
     if (character == NULL) {//err
+        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под считываемый символ.");
         string_builder_destroy(command);
         string_builder_destroy(buffer);
         return NULL;
     }
     character[0] = getchar();
     while (character[0] == EOF) {
-        println(STRING, "Некорректный ввод, попробуйте ввести команду ещё раз.");
-        print(STRING, "Введите команду:");
+        print(STRING, "Некорректный ввод, попробуйте ввести ещё раз:");
         character[0] = getchar();
     }
     while (character[0] != '\0' && character[0] != '\n') {
@@ -42,10 +47,23 @@ string_builder *read_command(error_s *error) { //TODO "включить" обр�
 }
 
 bool console(error_s *error) {
-    string_builder *string_command = read_command(error);
-    if (string_command == NULL) return false;//err
-    linked_list *tokens_list = string_builder_get_token_list(string_command, " \t");
-    //linked_list_print(stdout, STRING, tokens_list, string_builder_print_to);
-    user_command *command;
+    while (true) {
+        print(STRING, "\nВведите команду:");
+        help_list_init(error);
+        string_builder *string_command = read_string(error);
+        if (string_command == NULL) return false;//err
+        linked_list *tokens_list = string_builder_get_token_list(string_command, " \t", 1);
+        user_command *command = get_user_command_from_list(tokens_list);
+        if (user_command_get_callback(command) == exit_command) {
+            run_command(command, error);
+            linked_list_destroy(tokens_list, string_builder_destroy);
+            string_builder_destroy(string_command);
+            break;
+        } else {
+            run_command(command, error);
+        }
+        string_builder_destroy(string_command);
+    }
+    help_list_destroy();
     return true;
 }
