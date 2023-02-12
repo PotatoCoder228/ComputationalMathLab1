@@ -2,7 +2,7 @@
 // Created by potato_coder on 06.02.23.
 //
 #include "../include/app.h"
-#include "../include/linear_algebra/quad_matrix.h"
+#include "../include/linear_algebra/lin_eq_solver.h"
 
 void print_greeting() {
     println(STRING, "████──████──███──████──███──████──████──████──████───███──████──████──████──████\n"
