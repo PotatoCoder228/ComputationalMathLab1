@@ -61,7 +61,7 @@ void script_command(error_s *error) {
     print(STRING, "Введите имя файла:");
     string_builder *arg = read_string(error);
     if (arg == NULL) {
-        throw_exception(error, INPUT_STREAM_READ_ERROR, "Не удалось прочитать строку.");
+        throw_exception(error, INPUT_STREAM_READ_ERROR, "script_command: Не удалось прочитать строку.");
     }
     print(STRING, "Выполнение вычислений с чтением из файла ");
     string_builder_print_to(stdout, STRING, arg);
@@ -98,13 +98,15 @@ user_command *get_user_command_from_list(linked_list *tokens) {
 void help_list_init(error_s *error) {
     user_command *command_help = new_user_command(help_command, (void *) descriptions[HELP]);
     if (command_help == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память для инициализации справки.");
+        throw_exception(error, MEM_ALLOC_DENIED,
+                        "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
     user_command *command_script = new_user_command(script_command, (void *) descriptions[SCRIPT]);
     if (command_script == NULL) {
         user_command_destroy(command_help);
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память для инициализации справки.");
+        throw_exception(error, MEM_ALLOC_DENIED,
+                        "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
     user_command *command_exit = new_user_command(exit_command, (void *) descriptions[EXIT]);
@@ -112,7 +114,8 @@ void help_list_init(error_s *error) {
     if (command_exit == NULL) {
         user_command_destroy(command_help);
         user_command_destroy(command_script);
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память для инициализации справки.");
+        throw_exception(error, MEM_ALLOC_DENIED,
+                        "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
 
@@ -121,7 +124,8 @@ void help_list_init(error_s *error) {
         user_command_destroy(command_help);
         user_command_destroy(command_script);
         user_command_destroy(command_exit);
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память для инициализации справки.");
+        throw_exception(error, MEM_ALLOC_DENIED,
+                        "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
     linked_list_push(commands_list, command_script, 0);

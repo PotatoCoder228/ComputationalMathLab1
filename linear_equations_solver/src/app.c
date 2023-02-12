@@ -2,6 +2,7 @@
 // Created by potato_coder on 06.02.23.
 //
 #include "../include/app.h"
+#include "../include/linear_algebra/quad_matrix.h"
 
 void print_greeting() {
     println(STRING, "████──████──███──████──███──████──████──████──████───███──████──████──████──████\n"
@@ -14,6 +15,7 @@ void print_greeting() {
 }
 
 int app_start(error_s *error) {
+    test(error);
     print_greeting();
     console(error);
     return 0;

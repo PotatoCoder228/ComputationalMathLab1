@@ -16,17 +16,17 @@
 string_builder *read_string(error_s *error) { //TODO "включить" обработку ошибок
     string_builder *command = new_string_builder();
     if (command == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под string_builder.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под command.");
         return NULL;
     }
     string_builder *buffer = new_string_builder();
     if (buffer == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под string_builder.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под buffer.");
         return NULL;//err
     }
     char *character = malloc(sizeof(char));
     if (character == NULL) {//err
-        throw_exception(error, MEM_ALLOC_DENIED, "Не удалось выделить память под считываемый символ.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под character.");
         string_builder_destroy(command);
         string_builder_destroy(buffer);
         return NULL;

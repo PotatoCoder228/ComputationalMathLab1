@@ -11,9 +11,10 @@
 #include "../string_utils/string_s.h"
 #include "../utils/printer.h"
 
-enum error_codes {
+enum system_error_codes {
     MEM_ALLOC_DENIED = 900,
-    INPUT_STREAM_READ_ERROR
+    INPUT_STREAM_READ_ERROR,
+    NULL_PTR_ERROR
 };
 
 typedef struct error_s error_s;
