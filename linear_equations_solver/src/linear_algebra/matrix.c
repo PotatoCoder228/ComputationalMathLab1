@@ -57,7 +57,7 @@ void matrix_print(matrix *matrix) {
     }
 }
 
-void matrix_destroy(matrix* matrix){
+void matrix_destroy(matrix *matrix) {
     free(matrix);
 }
 

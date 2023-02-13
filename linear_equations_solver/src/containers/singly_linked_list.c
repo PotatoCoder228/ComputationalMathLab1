@@ -46,6 +46,8 @@ void linked_list_destroy(linked_list *list, void (*destroyer)(void *data)) {
             if (buffer->value_in_heap == true) {
                 destroyer(buffer->value);
             }
+            buffer->value = NULL;
+            buffer->next = NULL;
             free(buffer);
         }
     }
@@ -165,7 +167,7 @@ bool linked_list_add_first(linked_list **node, void *value, bool in_heap) {//OK
 }
 
 size_t linked_list_get_size(linked_list *node) {
-    size_t counter = 1;
+    size_t counter = 0;
     while (node != NULL) {
         counter += 1;
         node = node->next;

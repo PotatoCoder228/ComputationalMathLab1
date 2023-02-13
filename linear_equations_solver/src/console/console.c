@@ -24,7 +24,7 @@ string_builder *read_string(error_s *error) { //TODO "включить" обра
         throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под buffer.");
         return NULL;//err
     }
-    char *character = malloc(sizeof(char));
+    char *character = malloc(sizeof(char) * 2);
     if (character == NULL) {//err
         throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под character.");
         string_builder_destroy(command);
@@ -32,6 +32,7 @@ string_builder *read_string(error_s *error) { //TODO "включить" обра
         return NULL;
     }
     character[0] = getchar();
+    character[1] = '\0';
     while (character[0] == EOF) {
         print(STRING, "Некорректный ввод, попробуйте ввести ещё раз:");
         character[0] = getchar();

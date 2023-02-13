@@ -3,6 +3,28 @@
 //
 #include "../../include/utils/printer.h"
 
+void print_num_array(double *array, enum printer_modes mode, size_t arr_size) {
+    for (size_t i = 0; i < arr_size; i++) {
+        if (i % 9 == 0) {
+            printf("%c", '\n');
+        }
+        printf(printer_mode[mode], array[i]);
+    }
+}
+
+void print_double_num_array(double **array, enum printer_modes mode, size_t arr_size) {
+    for (size_t i = 0; i < arr_size; i++) {
+        printf("%s", "{");
+        for (size_t j = 0; j < arr_size; j++) {
+            if (i % 9 == 0) {
+                printf("%c", '\n');
+            }
+            printf(printer_mode[mode], array[i][j]);
+        }
+        printf("%s", "},\n");
+    }
+}
+
 void print(enum printer_modes mode, void *arg) {
     printf(printer_mode[mode], arg);
 }

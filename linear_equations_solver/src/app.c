@@ -15,7 +15,6 @@ void print_greeting() {
 }
 
 int app_start(error_s *error) {
-    test(error);
     print_greeting();
     console(error);
     return 0;

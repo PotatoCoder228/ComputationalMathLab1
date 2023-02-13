@@ -14,13 +14,15 @@
 enum commands {
     HELP = 0,
     EXIT,
-    SCRIPT
+    SCRIPT,
+    GAUSS_METHOD
 };
 
 static const char *descriptions[6] = {
-        "help - Выводит справку по командам",
-        "exit - Выход из приложения",
-        "script <filename> - Выполнение скрипта из файла."
+        "help - Выводит справку по командам;",
+        "exit - Выход из приложения;",
+        "script <filename> - Выполнение скрипта из файла;",
+        "gauss_method - Решение СЛАУ, заданной в виде матрицы и вектора B;"
 };
 
 typedef struct user_command user_command;

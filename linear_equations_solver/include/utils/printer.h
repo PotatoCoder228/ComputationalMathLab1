@@ -28,4 +28,8 @@ void println(enum printer_modes mode, void *arg);
 
 void println_to(FILE *stream, enum printer_modes mode, void *arg);
 
+void print_num_array(double *array, enum printer_modes mode, size_t arr_size);
+
+void print_double_num_array(double **array, enum printer_modes mode, size_t arr_size);
+
 #endif //COUNTMATHLAB1_PRINTER_H
