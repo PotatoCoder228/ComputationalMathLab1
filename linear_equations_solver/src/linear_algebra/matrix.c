@@ -57,6 +57,10 @@ void matrix_print(matrix *matrix) {
     }
 }
 
+void matrix_destroy(matrix* matrix){
+    free(matrix);
+}
+
 /*
 double matrix_determinant(matrix* matrix, error_s* error){
     double result = 0;
