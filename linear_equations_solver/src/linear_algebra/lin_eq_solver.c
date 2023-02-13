@@ -47,7 +47,7 @@ int64_t matrix_to_triangular_view(matrix *matrix, error_s *error) {
 double chain(matrix* matrix, double* results, size_t x){
     double** m_array = matrix_get_matrix(matrix);
     size_t rows = matrix_get_rows(matrix) - 1;
-    if(x == 0){ //если равно самой нижней строке то
+    if(x == 0){
         results[rows-x] = results[rows-x]/m_array[rows-x][rows-x];
         printf("\nВершина рекурсии: %lf\n",results[rows-x]);
         return results[rows-x];
@@ -63,6 +63,7 @@ double chain(matrix* matrix, double* results, size_t x){
         println(STRING,"\nВычисление нового вызова.");
         for(size_t i = 0; i <= matrix_get_rows(matrix)-x-1; i++){
             printf("\nОтнимаем от правой части %lf число (%lf * %lf)\n", results[i], m_array[i][rows-x+1], k);
+            printf("\nresults[%ld] - m_array[%ld, %ld]*k\n", i, i, rows-x+1);
             results[i] = (results[i] - (m_array[i][rows-x+1]*k));
             printf("Правая часть строки %ld: %lf\n", x, results[i]);
         }
@@ -76,7 +77,7 @@ double chain(matrix* matrix, double* results, size_t x){
         }
         */
         results[rows-x] /= m_array[rows-x][rows-x];
-        return results[x];
+        return results[rows-x];
     }
 
 }
@@ -118,10 +119,10 @@ void test(error_s *error) {
     matrix *matrix = new_matrix();
 
     double **m_array = malloc(sizeof(double*) * 4);
-    double first[5] = {1, -1, 3, 1, 5};
-    double second[5] = {4, -1, 5, 4, 4};
-    double third[5] = {2, -2, 4, 1, 6};
-    double four[5] =  {1, -4, 5, -1, 3};
+    double first[5] = {1, 1, 2, 3, 1};
+    double second[5] = {1, 2, 3, -1, -4};
+    double third[5] = {3, -1, -1, -2, -4};
+    double four[5] =  {2, 3, -1, -1, -6};
 
     m_array[0] = first;
     m_array[1] = second;
@@ -136,7 +137,7 @@ void test(error_s *error) {
     int64_t k = matrix_to_triangular_view(matrix, error);
     double det = matrix_det_from_triangular_view(matrix, k, error);
     printf("%s: %lf\n", "Детерминант", det);
-    double* results = malloc(sizeof(double)*3);
+    double* results = malloc(sizeof(double)*4);
     gauss_method_inverse(matrix, results, error);
     free(m_array);
     free(results);
