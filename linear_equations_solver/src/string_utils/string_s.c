@@ -2,6 +2,7 @@
 // Created by potato_coder on 07.02.23.
 //
 
+#include <errno.h>
 #include "../../include/string_utils/string_s.h"
 
 typedef struct string_builder {
@@ -15,6 +16,8 @@ string_builder *new_string_builder() {
         builder->string = malloc(sizeof(char));
         (builder->string)[0] = '\0';
         builder->size = strlen(builder->string);
+    } else {
+        printf("%s", strerror(errno));
     }
     return builder;
 }

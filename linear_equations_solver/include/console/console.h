@@ -12,6 +12,6 @@
 
 bool console(error_s *error);
 
-string_builder *read_string(error_s *error);
+string_builder *read_string(FILE *stream, error_s *error);
 
 #endif //COUNTMATHLAB1_CONSOLE_H

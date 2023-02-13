@@ -6,6 +6,7 @@
 #include "../../include/console/console.h"
 #include "../../include/linear_algebra/matrix.h"
 #include "../../include/linear_algebra/lin_eq_solver.h"
+#include "../../include/io/io_handler.h"
 
 linked_list *commands_list;
 
@@ -72,12 +73,8 @@ static void string_builder_list_to_doubles_array(double *m_array, size_t arr_siz
     }
 }
 
-void gauss_method_command(error_s *error) {
-    println(STRING, "Введите коэффициенты СЛАУ для 1 строки.");
-    println(STRING, "Матрица должна получиться квадратной.\n"
-                    "Количество строк/столбцов определяется по количеству чисел в 1 строке.\n"
-                    "Не более 20 элементов(все остальные не будут считываться в матрицу).");
-    string_builder *matrix_string = read_string(error);
+static void gauss_method_from(FILE *stream, error_s *error) {
+    string_builder *matrix_string = read_string(stream, error);
     linked_list *k_list = string_builder_get_token_list(matrix_string, " \t", 20);
     const size_t matrix_width = linked_list_get_size(k_list);
     double *array = malloc(sizeof(double) * (matrix_width + 1));
@@ -87,7 +84,7 @@ void gauss_method_command(error_s *error) {
     m_array[0] = array;
     string_builder_destroy(matrix_string);
     for (size_t i = 1; i < matrix_width; i++) {
-        matrix_string = read_string(error);
+        matrix_string = read_string(stream, error);
         k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
         if (linked_list_get_size(k_list) != matrix_width) {
             println(STRING, "Количество коэффициентов не равно размерности матрицы!");
@@ -99,7 +96,7 @@ void gauss_method_command(error_s *error) {
         string_builder_destroy(matrix_string);
     }
     println(STRING, "Введите вектор B:");
-    matrix_string = read_string(error);
+    matrix_string = read_string(stream, error);
     k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
     array = malloc(sizeof(double) * (matrix_width + 1));
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
@@ -113,7 +110,7 @@ void gauss_method_command(error_s *error) {
     matrix_print(matrix);
     print(STRING, "\n");
     int64_t k = matrix_to_triangular_view(matrix, error);
-    if(error_get_code(error) != 0){
+    if (error_get_code(error) != 0) {
         for (size_t i = 0; i < matrix_width; i++) {
             free(m_array[i]);
         }
@@ -147,14 +144,29 @@ void gauss_method_command(error_s *error) {
     free(results);
 }
 
-void script_command(error_s *error) {
+void gauss_command(error_s *error) {
+    println(STRING, "Введите коэффициенты СЛАУ для 1 строки.");
+    println(STRING, "Матрица должна получиться квадратной.\n"
+                    "Количество строк/столбцов определяется по количеству чисел в 1 строке.\n"
+                    "Не более 20 элементов(все остальные не будут считываться в матрицу).");
+    gauss_method_from(stdin, error);
+}
+
+void gauss_f_command(error_s *error) {
     print(STRING, "Введите имя файла:");
-    string_builder *arg = read_string(error);
+    string_builder *arg = read_string(stdin, error);
     if (arg == NULL) {
-        throw_exception(error, INPUT_STREAM_READ_ERROR, "script_command: Не удалось прочитать строку.");
+        throw_exception(error, INPUT_STREAM_READ_ERROR, "gauss_f_command: Не удалось прочитать строку.");
     }
-    print(STRING, "Выполнение вычислений с чтением из файла ");
-    string_builder_print_to(stdout, STRING, arg);
+    FILE *file;
+    open_file(&file, string_builder_get_string(arg), R, error);
+    if (file == NULL) {
+        string_builder_destroy(arg);
+        return;
+    }
+    gauss_method_from(file, error);
+    close_file(&file, error);
+    string_builder_destroy(arg);
 }
 
 void exit_command(error_s *error) {
@@ -175,12 +187,12 @@ user_command *get_user_command_from_list(linked_list *tokens) {
     string_builder *command = linked_list_get_node_value(tokens);
     if (!strcmp(string_builder_get_string(command), "help")) {
         user_command_set_callback(user_command, help_command);
-    } else if (!strcmp(string_builder_get_string(command), "script")) {
-        user_command_set_callback(user_command, script_command);
+    } else if (!strcmp(string_builder_get_string(command), "gauss_f")) {
+        user_command_set_callback(user_command, gauss_f_command);
     } else if (!strcmp(string_builder_get_string(command), "exit")) {
         user_command_set_callback(user_command, exit_command);
-    } else if (!strcmp(string_builder_get_string(command), "gauss_method")) {
-        user_command_set_callback(user_command, gauss_method_command);
+    } else if (!strcmp(string_builder_get_string(command), "gauss")) {
+        user_command_set_callback(user_command, gauss_command);
     } else {
         user_command_set_callback(user_command, undefined_command);
     }
@@ -194,8 +206,8 @@ void help_list_init(error_s *error) {
                         "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
-    user_command *command_script = new_user_command(script_command, (void *) descriptions[SCRIPT]);
-    if (command_script == NULL) {
+    user_command *command_gauss_f = new_user_command(gauss_f_command, (void *) descriptions[GAUSS_F]);
+    if (command_gauss_f == NULL) {
         user_command_destroy(command_help);
         throw_exception(error, MEM_ALLOC_DENIED,
                         "help_list_init: Не удалось выделить память для инициализации справки.");
@@ -205,18 +217,18 @@ void help_list_init(error_s *error) {
 
     if (command_exit == NULL) {
         user_command_destroy(command_help);
-        user_command_destroy(command_script);
+        user_command_destroy(command_gauss_f);
         throw_exception(error, MEM_ALLOC_DENIED,
                         "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
 
-    user_command *command_gauss_method = new_user_command(gauss_method_command, (void *) descriptions[GAUSS_METHOD]);
+    user_command *command_gauss = new_user_command(gauss_command, (void *) descriptions[GAUSS]);
 
     if (command_exit == NULL) {
         user_command_destroy(command_help);
-        user_command_destroy(command_script);
-        user_command_destroy(command_gauss_method);
+        user_command_destroy(command_gauss_f);
+        user_command_destroy(command_gauss);
         throw_exception(error, MEM_ALLOC_DENIED,
                         "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
@@ -225,16 +237,16 @@ void help_list_init(error_s *error) {
     commands_list = linked_list_init(command_help, 0);
     if (commands_list == NULL) {
         user_command_destroy(command_help);
-        user_command_destroy(command_script);
+        user_command_destroy(command_gauss_f);
         user_command_destroy(command_exit);
-        user_command_destroy(command_gauss_method);
+        user_command_destroy(command_gauss);
         throw_exception(error, MEM_ALLOC_DENIED,
                         "help_list_init: Не удалось выделить память для инициализации справки.");
         return;
     }
-    linked_list_push(commands_list, command_script, 0);
+    linked_list_push(commands_list, command_gauss_f, 0);
     linked_list_push(commands_list, command_exit, 0);
-    linked_list_push(commands_list, command_gauss_method, 0);
+    linked_list_push(commands_list, command_gauss, 0);
 }
 
 void help_list_destroy() {

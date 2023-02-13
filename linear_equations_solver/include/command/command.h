@@ -14,15 +14,15 @@
 enum commands {
     HELP = 0,
     EXIT,
-    SCRIPT,
-    GAUSS_METHOD
+    GAUSS_F,
+    GAUSS
 };
 
 static const char *descriptions[6] = {
         "help - Выводит справку по командам;",
         "exit - Выход из приложения;",
-        "script <filename> - Выполнение скрипта из файла;",
-        "gauss_method - Решение СЛАУ, заданной в виде матрицы и вектора B;"
+        "gauss_f <filename> - Выполнение скрипта из файла;",
+        "gauss - Решение СЛАУ, заданной в виде матрицы и вектора B;"
 };
 
 typedef struct user_command user_command;
@@ -47,7 +47,9 @@ void run_command(user_command *command, error_s *error);
 
 user_command *get_user_command_from_list(linked_list *tokens);
 
-void script_command(error_s *error);
+void gauss_f_command(error_s *error);
+
+void gauss_command(error_s *error);
 
 void help_command(error_s *error);
 
