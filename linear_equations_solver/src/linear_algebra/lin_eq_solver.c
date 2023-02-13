@@ -19,11 +19,16 @@ int64_t matrix_to_triangular_view(matrix *matrix, error_s *error) {
     if (matrix != NULL) {
         double **m_array = matrix_get_matrix(matrix);
         for (size_t i = 0; i < matrix_get_rows(matrix); i++) {
+            double buf = m_array[i][i];
             for (size_t aboba = i + 1; (m_array[i][i]) == 0 && aboba < matrix_get_rows(matrix); aboba++) {
                 if (m_array[aboba][i] != 0) {
                     matrix_swap_rows(matrix, i, aboba, error);
                     rows_swaps++;
                 }
+            }
+            if(buf == m_array[i][i]){
+                throw_exception(error, -1, "Детерминант равен 0!\nСЛАУ имеет бесконечное множество решений или не имеет вовсе!\n");
+                return 0;
             }
             double k;
             for (size_t row = i + 1; row < matrix_get_rows(matrix); row++) {

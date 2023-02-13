@@ -113,6 +113,15 @@ void gauss_method_command(error_s *error) {
     matrix_print(matrix);
     print(STRING, "\n");
     int64_t k = matrix_to_triangular_view(matrix, error);
+    if(error_get_code(error) != 0){
+        for (size_t i = 0; i < matrix_width; i++) {
+            free(m_array[i]);
+        }
+        free(array);
+        free(m_array);
+        matrix_destroy(matrix);
+        return;
+    }
     double det = matrix_det_from_triangular_view(matrix, k, error);
     printf("\n%s: %lf\n\n", "Детерминант", det);
     if (det == 0) {
@@ -121,6 +130,7 @@ void gauss_method_command(error_s *error) {
             free(m_array[i]);
         }
         free(array);
+        free(m_array);
         matrix_destroy(matrix);
         return;
     }
@@ -135,7 +145,6 @@ void gauss_method_command(error_s *error) {
     free(array);
     free(m_array);
     free(results);
-    matrix_destroy(matrix);
 }
 
 void script_command(error_s *error) {

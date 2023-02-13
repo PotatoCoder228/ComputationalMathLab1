@@ -48,6 +48,7 @@ void throw_exception(error_s *error, int code, char *message) {
         string_builder_set_string(string, message);
         error_set_code(error, code);
         error_set_message(error, string);
+        print_to(stderr, STRING, "\n");
         error_print_to(stderr, error);
     }
 }
