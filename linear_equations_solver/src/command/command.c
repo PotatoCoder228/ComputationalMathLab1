@@ -158,7 +158,7 @@ static void gauss_method_from(FILE *stream, error_s *error) {
             rs[i] -= results[j] * r_array[i][j];
         }
         printf("r_%ld: ", i);
-        print_double(rs[i]);
+        printf("%.51F", rs[i]);
         print(STRING, "\n");
     }
     free(array);
@@ -267,8 +267,8 @@ void help_list_init(error_s *error) {
         return;
     }
     linked_list_push(commands_list, command_gauss_f, 0);
-    linked_list_push(commands_list, command_exit, 0);
     linked_list_push(commands_list, command_gauss, 0);
+    linked_list_push(commands_list, command_exit, 0);
 }
 
 void help_list_destroy() {

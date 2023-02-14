@@ -16,6 +16,7 @@ void gauss_method_inverse(matrix *matrix, double *results, error_s *error);
 void matrix_destroy(matrix *matrix);
 
 void print_SLAE(matrix *matrix);
+
 void print_double(double k);
 
 #endif //COUNTMATHLAB1_LIN_EQ_SOLVER_H

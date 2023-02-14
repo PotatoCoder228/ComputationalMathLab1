@@ -5,8 +5,8 @@
 #include "../../include/linear_algebra/lin_eq_solver.h"
 
 void print_double(double k) {
-    if(k<0.000001&&k>-0.000001){
-        k=0.0;
+    if (k < 0.000001 && k > -0.000001) {
+        k = 0.0;
     }
     printf("%10lF ", k);
 }
