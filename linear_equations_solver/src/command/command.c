@@ -79,6 +79,7 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     const size_t matrix_width = linked_list_get_size(k_list);
     double *array = malloc(sizeof(double) * (matrix_width + 1));
     double **m_array = malloc(sizeof(double *) * matrix_width);
+    double r_array[matrix_width][matrix_width + 1];
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
     linked_list_destroy(k_list, string_builder_destroy);
     m_array[0] = array;
@@ -95,13 +96,20 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         linked_list_destroy(k_list, string_builder_destroy);
         string_builder_destroy(matrix_string);
     }
-    println(STRING, "Введите вектор B:");
+
+    println(STRING, "\nВведите вектор B:");
     matrix_string = read_string(stream, error);
+    print(STRING, "\n");
     k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
     array = malloc(sizeof(double) * (matrix_width + 1));
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
     for (size_t i = 0; i < matrix_width; i++) {
         m_array[i][matrix_width] = array[i];
+    }
+    for (size_t i = 0; i < matrix_width; i++) {
+        for (size_t j = 0; j <= matrix_width; j++) {
+            r_array[i][j] = m_array[i][j];
+        }
     }
     linked_list_destroy(k_list, string_builder_destroy);
     string_builder_destroy(matrix_string);
@@ -133,11 +141,21 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     }
     double *results = malloc(sizeof(double) * 4);
     gauss_method_inverse(matrix, results, error);
+    print(STRING, "\nВектор искомых неизвестных:\n");
     for (size_t i = 0; i < matrix_width; i++) {
         printf("x_%ld = %lf\n", i + 1, results[i]);
     }
     for (size_t i = 0; i < matrix_width; i++) {
         free(m_array[i]);
+    }
+    double rs[matrix_width];
+    print(STRING, "\nВектор невязки:\n");
+    for (size_t i = 0; i < matrix_width; i++) {
+        rs[i] = r_array[i][matrix_width];
+        for (size_t j = 0; j < matrix_width; j++) {
+            rs[i] -= results[j] * r_array[i][j];
+        }
+        printf("r_%ld: %lf\n", i, rs[i]);
     }
     free(array);
     free(m_array);

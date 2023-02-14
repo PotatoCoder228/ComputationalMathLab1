@@ -12,10 +12,10 @@ void print_num_array(double *array, enum printer_modes mode, size_t arr_size) {
     }
 }
 
-void print_double_num_array(double **array, enum printer_modes mode, size_t arr_size) {
-    for (size_t i = 0; i < arr_size; i++) {
+void print_double_num_array(double **array, enum printer_modes mode, size_t arr_width, size_t arr_height) {
+    for (size_t i = 0; i < arr_height; i++) {
         printf("%s", "{");
-        for (size_t j = 0; j < arr_size; j++) {
+        for (size_t j = 0; j < arr_width; j++) {
             if (i % 9 == 0) {
                 printf("%c", '\n');
             }
