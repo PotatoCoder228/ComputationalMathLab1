@@ -4,6 +4,26 @@
 
 #include "../../include/linear_algebra/lin_eq_solver.h"
 
+void print_double(double k) {
+    if(k<0.000001&&k>-0.000001){
+        k=0.0;
+    }
+    printf("%10lF ", k);
+}
+
+void print_SLAE(matrix *matrix) {
+    double **m_array = matrix_get_matrix(matrix);
+    for (size_t i = 0; i < matrix_get_rows(matrix); i++) {
+        for (size_t j = 0; j < matrix_get_columns(matrix); j++) {
+            if (j == matrix_get_columns(matrix) - 1) {
+                print(STRING, "|");
+            }
+            print_double(m_array[i][j]);
+        }
+        print(STRING, "\n");
+    }
+}
+
 static double num_pow(int64_t num, int64_t k) {
     if (k == 0) {
         return 1;
@@ -39,7 +59,7 @@ int64_t matrix_to_triangular_view(matrix *matrix, error_s *error) {
                 }
             }
             print(STRING, "\n");
-            matrix_print(matrix);
+            print_SLAE(matrix);
         }
     } else {
         throw_exception(error, NULL_PTR_ERROR, "matrix_to_triangular_view: передан NULL указатель.");

@@ -115,7 +115,7 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     string_builder_destroy(matrix_string);
     matrix *matrix = new_matrix();
     matrix_init(matrix, m_array, matrix_width, matrix_width + 1);
-    matrix_print(matrix);
+    print_SLAE(matrix);
     print(STRING, "\n");
     int64_t k = matrix_to_triangular_view(matrix, error);
     if (error_get_code(error) != 0) {
@@ -143,7 +143,9 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     gauss_method_inverse(matrix, results, error);
     print(STRING, "\nВектор искомых неизвестных:\n");
     for (size_t i = 0; i < matrix_width; i++) {
-        printf("x_%ld = %lf\n", i + 1, results[i]);
+        printf("x_%ld = ", i + 1);
+        print_double(results[i]);
+        print(STRING, "\n");
     }
     for (size_t i = 0; i < matrix_width; i++) {
         free(m_array[i]);
@@ -155,7 +157,9 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         for (size_t j = 0; j < matrix_width; j++) {
             rs[i] -= results[j] * r_array[i][j];
         }
-        printf("r_%ld: %lf\n", i, rs[i]);
+        printf("r_%ld: ", i);
+        print_double(rs[i]);
+        print(STRING, "\n");
     }
     free(array);
     free(m_array);
