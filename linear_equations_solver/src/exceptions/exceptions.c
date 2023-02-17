@@ -10,6 +10,7 @@ typedef struct error_s {
 
 error_s *new_error() {
     error_s *error = malloc(sizeof(error_s));
+    error->message = NULL;
     error->code = 0;
     return error;
 }
@@ -50,6 +51,7 @@ void throw_exception(error_s *error, int code, char *message) {
         error_set_message(error, string);
         print_to(stderr, STRING, "\n");
         error_print_to(stderr, error);
+        exit(EXIT_FAILURE);
     }
 }
 

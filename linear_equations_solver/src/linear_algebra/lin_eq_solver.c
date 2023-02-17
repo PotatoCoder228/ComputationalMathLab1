@@ -47,8 +47,8 @@ int64_t matrix_to_triangular_view(matrix *matrix, error_s *error) {
                 }
             }
             if (buf == m_array[i][i] && buf == 0) {
-                throw_exception(error, -1,
-                                "Детерминант равен 0!\nСЛАУ имеет бесконечное множество решений или не имеет вовсе!\n");
+                println(STRING, "Детерминант равен 0!\nСЛАУ имеет бесконечное множество решений или не имеет вовсе!\n");
+                error_set_code(error, DET_IS_EQ_ZERO);
                 return 0;
             }
             double k;

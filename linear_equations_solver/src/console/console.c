@@ -13,20 +13,24 @@
  * из потока ввода.
  * */
 
-string_builder *read_string(FILE *stream, error_s *error) {
+string_builder *read_line(FILE *stream, error_s *error) {
+    if (stream == NULL) {
+        throw_exception(error, NULL_PTR_ERROR, "read_line: передан NULL указатель на FILE*.");
+        return NULL;
+    }
     string_builder *command = new_string_builder();
     if (command == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под command.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под command.");
         return NULL;
     }
     string_builder *buffer = new_string_builder();
     if (buffer == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под buffer.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под buffer.");
         return NULL;//err
     }
     char *character = malloc(sizeof(char) * 2);
     if (character == NULL) {//err
-        throw_exception(error, MEM_ALLOC_DENIED, "read_string: недостаточно памяти для выделения под character.");
+        throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под character.");
         string_builder_destroy(command);
         string_builder_destroy(buffer);
         return NULL;
@@ -51,7 +55,7 @@ bool console(error_s *error) {
     while (true) {
         print(STRING, "\nВведите команду:");
         help_list_init(error);
-        string_builder *string_command = read_string(stdin, error);
+        string_builder *string_command = read_line(stdin, error);
         if (string_command == NULL) {
             throw_exception(error, MEM_ALLOC_DENIED, "concole(): недостаточно места для создания структуры");
             return false;

@@ -47,7 +47,6 @@ char *string_builder_get_string(string_builder *string_builder) {
     return string_builder->string;
 }
 
-//TODO доделать API для работы со строками
 void string_builder_copy(string_builder *src, string_builder *dest) {
     if (src != NULL && dest != NULL && ((src->size) == (dest->size))) {
         strcpy(dest->string, src->string);
@@ -80,6 +79,9 @@ bool string_builder_equals(string_builder *builder_1, string_builder *builder_2)
 }
 
 linked_list *string_builder_get_token_list(string_builder *string, char *sep, size_t counts) {
+    if (string == NULL) {
+        return NULL;
+    }
     linked_list *result = NULL;
     char *buf;
     string_builder *token;

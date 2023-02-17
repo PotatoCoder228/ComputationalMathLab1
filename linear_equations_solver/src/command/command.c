@@ -7,6 +7,7 @@
 #include "../../include/linear_algebra/matrix.h"
 #include "../../include/linear_algebra/lin_eq_solver.h"
 #include "../../include/io/io_handler.h"
+#include "../../include/chart/gtk_chart.h"
 
 linked_list *commands_list;
 
@@ -74,8 +75,15 @@ static void string_builder_list_to_doubles_array(double *m_array, size_t arr_siz
 }
 
 static void gauss_method_from(FILE *stream, error_s *error) {
-    string_builder *matrix_string = read_string(stream, error);
+    if (stream == NULL) {
+        throw_exception(error, NULL_PTR_ERROR, "gauss_method_from: передан NULL указатель на FILE*.");
+    }
+    string_builder *matrix_string = read_line(stream, error);
     linked_list *k_list = string_builder_get_token_list(matrix_string, " \t", 20);
+    if (k_list == NULL) {
+        printf("Ничего не введено.");
+        return;
+    }
     const size_t matrix_width = linked_list_get_size(k_list);
     double *array = malloc(sizeof(double) * (matrix_width + 1));
     double **m_array = malloc(sizeof(double *) * matrix_width);
@@ -85,10 +93,17 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     m_array[0] = array;
     string_builder_destroy(matrix_string);
     for (size_t i = 1; i < matrix_width; i++) {
-        matrix_string = read_string(stream, error);
+        matrix_string = read_line(stream, error);
         k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
         if (linked_list_get_size(k_list) != matrix_width) {
             println(STRING, "Количество коэффициентов не равно размерности матрицы!");
+            for (size_t k = 0; k < i - 1; k++) {
+                free(m_array[k]);
+            }
+            free(m_array);
+            linked_list_destroy(k_list, string_builder_destroy);
+            string_builder_destroy(matrix_string);
+            return;
         }
         array = malloc(sizeof(double) * (matrix_width + 1));
         string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
@@ -98,9 +113,19 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     }
 
     println(STRING, "\nВведите вектор B:");
-    matrix_string = read_string(stream, error);
+    matrix_string = read_line(stream, error);
     print(STRING, "\n");
     k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
+    if (linked_list_get_size(k_list) != matrix_width) {
+        printf("Некорректный ввод: вектор В должен быть равен по длине размерности матрицы.");
+        for (size_t k = 0; k < matrix_width; k++) {
+            free(m_array[k]);
+        }
+        free(m_array);
+        linked_list_destroy(k_list, string_builder_destroy);
+        string_builder_destroy(matrix_string);
+        return;
+    }
     array = malloc(sizeof(double) * (matrix_width + 1));
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
     for (size_t i = 0; i < matrix_width; i++) {
@@ -176,7 +201,7 @@ void gauss_command(error_s *error) {
 
 void gauss_f_command(error_s *error) {
     print(STRING, "Введите имя файла:");
-    string_builder *arg = read_string(stdin, error);
+    string_builder *arg = read_line(stdin, error);
     if (arg == NULL) {
         throw_exception(error, INPUT_STREAM_READ_ERROR, "gauss_f_command: Не удалось прочитать строку.");
     }
@@ -193,6 +218,11 @@ void gauss_f_command(error_s *error) {
 
 void exit_command(error_s *error) {
     println(STRING, "Производится выход из программы...");
+}
+
+void chart_command(error_s *error) {
+    double *array = NULL;
+    build_gtk_chart(array);
 }
 
 void undefined_command(error_s *error) {
@@ -215,6 +245,8 @@ user_command *get_user_command_from_list(linked_list *tokens) {
         user_command_set_callback(user_command, exit_command);
     } else if (!strcmp(string_builder_get_string(command), "gauss")) {
         user_command_set_callback(user_command, gauss_command);
+    } else if (!strcmp(string_builder_get_string(command), "chart")) {
+        user_command_set_callback(user_command, chart_command);
     } else {
         user_command_set_callback(user_command, undefined_command);
     }

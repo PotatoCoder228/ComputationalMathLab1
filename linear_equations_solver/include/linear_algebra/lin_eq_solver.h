@@ -7,6 +7,10 @@
 
 #include "matrix.h"
 
+enum equation_error {
+    DET_IS_EQ_ZERO = 1000
+};
+
 int64_t matrix_to_triangular_view(matrix *matrix, error_s *error);
 
 double matrix_det_from_triangular_view(matrix *matrix, int64_t rows_swaps, error_s *error);
