@@ -18,9 +18,9 @@ string_builder *read_line(FILE *stream, error_s *error) {
         throw_exception(error, NULL_PTR_ERROR, "read_line: передан NULL указатель на FILE*.");
         return NULL;
     }
-    string_builder *command = new_string_builder();
-    if (command == NULL) {
-        throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под command.");
+    string_builder *line = new_string_builder();
+    if (line == NULL) {
+        throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под line.");
         return NULL;
     }
     string_builder *buffer = new_string_builder();
@@ -31,7 +31,7 @@ string_builder *read_line(FILE *stream, error_s *error) {
     char *character = malloc(sizeof(char) * 2);
     if (character == NULL) {//err
         throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения под character.");
-        string_builder_destroy(command);
+        string_builder_destroy(line);
         string_builder_destroy(buffer);
         return NULL;
     }
@@ -43,12 +43,13 @@ string_builder *read_line(FILE *stream, error_s *error) {
     }
     while (character[0] != '\0' && character[0] != '\n' && feof(stream) == 0) {
         string_builder_set_string(buffer, character);
-        string_builder_concat(command, buffer);
+        string_builder_concat(line, buffer);
         character[0] = fgetc(stream);
     }
     string_builder_destroy(buffer);
     free(character);
-    return command;
+    character = NULL;
+    return line;
 }
 
 bool console(error_s *error) {

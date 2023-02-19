@@ -2,6 +2,7 @@
 // Created by potato_coder on 09.02.23.
 //
 
+#include <ctype.h>
 #include "../../include/command/command.h"
 #include "../../include/console/console.h"
 #include "../../include/linear_algebra/matrix.h"
@@ -10,6 +11,7 @@
 #include "../../include/chart/gtk_chart.h"
 
 linked_list *commands_list;
+int checker = 0;
 
 typedef struct user_command {
     char *description;
@@ -61,20 +63,20 @@ void help_command(error_s *error) {
     print_commands_help();
 }
 
-static void string_builder_list_to_doubles_array(double *m_array, size_t arr_size, linked_list *list, error_s *error) {
+void string_builder_list_to_doubles_array(double *m_array, size_t arr_size, linked_list *list, error_s *error) {
     if (list != NULL && m_array != NULL) {
         for (size_t i = 0; i < arr_size; i++) {
             string_builder *string = linked_list_get(list, i);
             char **end = NULL;
-            double num = strtod(string_builder_get_string(string), end);
-            m_array[i] = num;
+            m_array[i] = strtod(string_builder_get_string(string), end);
         }
     } else {
         throw_exception(error, NULL_PTR_ERROR, "string_builder_list_to_doubles_array: передан NULL указатель");
     }
 }
 
-static void gauss_method_from(FILE *stream, error_s *error) {
+void gauss_method_from(FILE *stream, error_s *error) {
+    error_set_default(error);
     if (stream == NULL) {
         throw_exception(error, NULL_PTR_ERROR, "gauss_method_from: передан NULL указатель на FILE*.");
     }
@@ -82,16 +84,23 @@ static void gauss_method_from(FILE *stream, error_s *error) {
     linked_list *k_list = string_builder_get_token_list(matrix_string, " \t", 20);
     if (k_list == NULL) {
         printf("Ничего не введено.");
+        string_builder_destroy(matrix_string);
         return;
     }
     const size_t matrix_width = linked_list_get_size(k_list);
+
     double *array = malloc(sizeof(double) * (matrix_width + 1));
     double **m_array = malloc(sizeof(double *) * matrix_width);
     double r_array[matrix_width][matrix_width + 1];
+
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
     linked_list_destroy(k_list, string_builder_destroy);
+    k_list = NULL;
     m_array[0] = array;
     string_builder_destroy(matrix_string);
+    matrix_string = NULL;
+
+
     for (size_t i = 1; i < matrix_width; i++) {
         matrix_string = read_line(stream, error);
         k_list = string_builder_get_token_list(matrix_string, " \t", matrix_width);
@@ -109,9 +118,11 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
         m_array[i] = array;
         linked_list_destroy(k_list, string_builder_destroy);
+        k_list = NULL;
         string_builder_destroy(matrix_string);
+        matrix_string = NULL;
+        array = NULL;
     }
-
     println(STRING, "\nВведите вектор B:");
     matrix_string = read_line(stream, error);
     print(STRING, "\n");
@@ -123,10 +134,15 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         }
         free(m_array);
         linked_list_destroy(k_list, string_builder_destroy);
+        k_list = NULL;
         string_builder_destroy(matrix_string);
+        matrix_string = NULL;
         return;
     }
     array = malloc(sizeof(double) * (matrix_width + 1));
+    if(array == NULL){
+        throw_exception(error, MEM_ALLOC_DENIED, "gauss_method_from: недостаточно памяти для выделения под array.");
+    }
     string_builder_list_to_doubles_array(array, matrix_width, k_list, error);
     for (size_t i = 0; i < matrix_width; i++) {
         m_array[i][matrix_width] = array[i];
@@ -137,7 +153,9 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         }
     }
     linked_list_destroy(k_list, string_builder_destroy);
+    k_list = NULL;
     string_builder_destroy(matrix_string);
+    matrix_string = NULL;
     matrix *matrix = new_matrix();
     matrix_init(matrix, m_array, matrix_width, matrix_width + 1);
     print_SLAE(matrix);
@@ -147,9 +165,10 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         for (size_t i = 0; i < matrix_width; i++) {
             free(m_array[i]);
         }
-        free(array);
         free(m_array);
+        m_array = NULL;
         matrix_destroy(matrix);
+        matrix = NULL;
         return;
     }
     double det = matrix_det_from_triangular_view(matrix, k, error);
@@ -159,12 +178,16 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         for (size_t i = 0; i < matrix_width; i++) {
             free(m_array[i]);
         }
-        free(array);
         free(m_array);
+        m_array = NULL;
         matrix_destroy(matrix);
+        matrix = NULL;
         return;
     }
     double *results = malloc(sizeof(double) * 4);
+    if(results == NULL){
+        throw_exception(error, MEM_ALLOC_DENIED, "gauss_metod_from: недостаточно памяти для выделения под results.");
+    }
     gauss_method_inverse(matrix, results, error);
     print(STRING, "\nВектор искомых неизвестных:\n");
     for (size_t i = 0; i < matrix_width; i++) {
@@ -173,22 +196,28 @@ static void gauss_method_from(FILE *stream, error_s *error) {
         print(STRING, "\n");
     }
     for (size_t i = 0; i < matrix_width; i++) {
-        free(m_array[i]);
+        if(*m_array != NULL && m_array != NULL) {
+            free(m_array[i]);
+            m_array[i] = NULL;
+        }
     }
-    double rs[matrix_width];
+    double rs[20] = {0};
     print(STRING, "\nВектор невязки:\n");
     for (size_t i = 0; i < matrix_width; i++) {
         rs[i] = r_array[i][matrix_width];
         for (size_t j = 0; j < matrix_width; j++) {
             rs[i] -= results[j] * r_array[i][j];
         }
-        printf("r_%ld: ", i);
+        printf("r_%ld: ", i+1);
         printf("%.51F", rs[i]);
         print(STRING, "\n");
     }
-    free(array);
     free(m_array);
+    m_array = NULL;
     free(results);
+    results = NULL;
+    matrix_destroy(matrix);
+    matrix = NULL;
 }
 
 void gauss_command(error_s *error) {

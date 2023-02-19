@@ -24,7 +24,7 @@ void print_SLAE(matrix *matrix) {
     }
 }
 
-static double num_pow(int64_t num, int64_t k) {
+double num_pow(int64_t num, int64_t k) {
     if (k == 0) {
         return 1;
     }
@@ -67,7 +67,7 @@ int64_t matrix_to_triangular_view(matrix *matrix, error_s *error) {
     return rows_swaps;
 }
 
-static double reverse_substitution(matrix *matrix, double *results, size_t x) {
+double reverse_substitution(matrix *matrix, double *results, size_t x) {
     double **m_array = matrix_get_matrix(matrix);
     size_t rows = matrix_get_rows(matrix) - 1;
     if (x == 0) {
