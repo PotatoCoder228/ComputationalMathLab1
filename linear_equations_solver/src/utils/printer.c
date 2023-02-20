@@ -12,14 +12,14 @@ void print_num_array(double *array, enum printer_modes mode, size_t arr_size) {
     }
 }
 
-void print_double_num_array(double **array, enum printer_modes mode, size_t arr_width, size_t arr_height) {
+void print_double_num_array(double **array, size_t arr_width, size_t arr_height) {
     for (size_t i = 0; i < arr_height; i++) {
         printf("%s", "{");
         for (size_t j = 0; j < arr_width; j++) {
-            if (i % 9 == 0) {
+            if (j % 9 == 0) {
                 printf("%c", '\n');
             }
-            printf(printer_mode[mode], array[i][j]);
+            printf("%lf ", array[i][j]);
         }
         printf("%s", "},\n");
     }

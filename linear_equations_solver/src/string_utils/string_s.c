@@ -26,12 +26,12 @@ void string_builder_set_string(string_builder *string_builder, const char *new_s
     if (string_builder != NULL) {
         size_t size = strlen(new_string);
         if (string_builder->string == NULL) {
-            string_builder->string = malloc(sizeof(char) * size);
+            string_builder->string = malloc(sizeof(char) * (size + 1));
             if (string_builder->string != NULL) {
                 string_builder->size = size;
             }
         } else {
-            string_builder->string = realloc(string_builder->string, sizeof(char) * size);
+            string_builder->string = realloc(string_builder->string, sizeof(char) * (size + 1));
             if (string_builder->string != NULL) {
                 string_builder->size = size;
             }
@@ -46,12 +46,13 @@ char *string_builder_get_string(string_builder *string_builder) {
     }
     return string_builder->string;
 }
-
+/*
 void string_builder_copy(string_builder *src, string_builder *dest) {
     if (src != NULL && dest != NULL && ((src->size) == (dest->size))) {
         strcpy(dest->string, src->string);
     }
 }
+*/
 
 bool string_builder_concat(string_builder *main, string_builder *from) {
     if (main != NULL && from != NULL) {
@@ -67,7 +68,10 @@ bool string_builder_concat(string_builder *main, string_builder *from) {
 }
 
 void string_builder_destroy(void *builder) {
-    free(string_builder_get_string((string_builder *) builder));
+    char *str = string_builder_get_string((string_builder *) builder);
+    if (str != NULL) {
+        free(str);
+    }
     free((string_builder *) builder);
 }
 
@@ -93,14 +97,14 @@ linked_list *string_builder_get_token_list(string_builder *string, char *sep, si
         }
         string_builder_set_string(token, buf);
         if (i == 0) {
-            result = linked_list_init(token, 1);
+            result = linked_list_init(token, true);
             if (result == NULL) {
                 string_builder_destroy(token);
                 return NULL;
             }
             buf = strtok(NULL, sep);
         } else {
-            linked_list_push(result, token, 1);
+            linked_list_push(result, token, true);
             buf = strtok(NULL, sep);
         }
     }

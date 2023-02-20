@@ -43,8 +43,11 @@ string_builder *read_line(FILE *stream, error_s *error) {
     }
     while (character[0] != '\0' && character[0] != '\n' && feof(stream) == 0) {
         string_builder_set_string(buffer, character);
-        string_builder_concat(line, buffer);
-        character[0] = fgetc(stream);
+        if (string_builder_concat(line, buffer)) {
+            character[0] = fgetc(stream);
+        } else {
+            throw_exception(error, MEM_ALLOC_DENIED, "read_line: недостаточно памяти для выделения.");
+        }
     }
     string_builder_destroy(buffer);
     free(character);

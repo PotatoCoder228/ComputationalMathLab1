@@ -5,10 +5,10 @@
 #include "../../include/linear_algebra/lin_eq_solver.h"
 
 void print_double(double k) {
-    if (k < 0.000001 && k > -0.000001) {
+    if (k < 0.01 && k > -0.01) {
         k = 0.0;
     }
-    printf("%10lF ", k);
+    printf("%5.2lF ", k);
 }
 
 void print_SLAE(matrix *matrix) {
@@ -17,6 +17,9 @@ void print_SLAE(matrix *matrix) {
         for (size_t j = 0; j < matrix_get_columns(matrix); j++) {
             if (j == matrix_get_columns(matrix) - 1) {
                 print(STRING, "|");
+            }
+            if(i == j){
+                printf("  ");
             }
             print_double(m_array[i][j]);
         }

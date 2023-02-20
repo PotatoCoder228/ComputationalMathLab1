@@ -34,7 +34,7 @@ size_t matrix_get_columns(matrix *matrix) {
 }
 
 int64_t matrix_swap_rows(matrix *matrix, size_t first_row, size_t second_row, error_s *error) {
-    if (matrix != NULL) {
+    if (matrix != NULL && second_row < matrix_get_rows(matrix) && matrix_get_rows(matrix) > first_row) {
         double **ptrs_array = matrix->matrix;
         double *buf = ptrs_array[first_row];
         ptrs_array[first_row] = ptrs_array[second_row];
