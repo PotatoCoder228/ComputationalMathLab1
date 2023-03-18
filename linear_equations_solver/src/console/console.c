@@ -56,6 +56,10 @@ string_builder *read_line(FILE *stream, error_s *error) {
 }
 
 bool console(error_s *error) {
+    double k = 1;
+    double a = 0.8999999999999999999999999999999999999999995;
+    printf("\n%.51F\n", k-a);
+    printf("\n%.128F\n", a);
     while (true) {
         print(STRING, "\nВведите команду:");
         help_list_init(error);

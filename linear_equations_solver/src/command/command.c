@@ -222,7 +222,7 @@ void gauss_f_command(error_s *error) {
     }
     FILE *file;
     open_file(&file, string_builder_get_string(arg), R, error);
-    if (file == NULL) {
+    if (error_get_code(error) != 0) {
         string_builder_destroy(arg);
         return;
     }
