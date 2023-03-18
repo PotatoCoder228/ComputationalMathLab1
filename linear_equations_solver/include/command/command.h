@@ -15,14 +15,18 @@ enum commands {
     HELP = 0,
     EXIT,
     GAUSS_F,
-    GAUSS
+    GAUSS,
+    NLE,
+    SNLE
 };
 
-static const char *descriptions[6] = {
+static const char *descriptions[8] = {
         "help - Выводит справку по командам;",
         "exit - Выход из приложения;",
         "gauss_f - Выполнение скрипта из файла;",
-        "gauss - Решение СЛАУ, заданной в виде матрицы и вектора B;"
+        "gauss - Решение СЛАУ, заданной в виде матрицы и вектора B;",
+        "nle - Решение НУ;",
+        "snle - Решение СНУ;"
 };
 
 typedef struct user_command user_command;

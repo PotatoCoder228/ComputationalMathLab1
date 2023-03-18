@@ -7,7 +7,7 @@ void open_file(FILE **stream, char *filename, enum open_file_modes mode, error_s
     *stream = fopen(filename, open_file_modes[mode]);
     if (*stream == NULL) {
         error_set_code(error, -1);
-        fprintf(stderr, "%s\n",strerror(errno));
+        fprintf(stderr, "%s\n", strerror(errno));
     } else {
         error_set_default(error);
     }

@@ -2,7 +2,6 @@
 // Created by potato_coder on 09.02.23.
 //
 
-#include <ctype.h>
 #include "../../include/command/command.h"
 #include "../../include/console/console.h"
 #include "../../include/linear_algebra/matrix.h"
@@ -11,7 +10,6 @@
 #include "../../include/chart/gtk_chart.h"
 
 linked_list *commands_list;
-int checker = 0;
 
 typedef struct user_command {
     char *description;
@@ -235,6 +233,16 @@ void exit_command(error_s *error) {
     println(STRING, "Производится выход из программы...");
 }
 
+/*
+ *
+ * */
+void nle_command(error_s *error) {
+    println(STRING, "nle_command...");
+}
+void snle_command(error_s *error) {
+    println(STRING, "snle_command...");
+}
+
 void chart_command(error_s *error) {
     double *array = NULL;
     build_gtk_chart(array);
@@ -262,6 +270,10 @@ user_command *get_user_command_from_list(linked_list *tokens) {
         user_command_set_callback(user_command, gauss_command);
     } else if (!strcmp(string_builder_get_string(command), "chart")) {
         user_command_set_callback(user_command, chart_command);
+    } else if (!strcmp(string_builder_get_string(command), "nle")) {
+        user_command_set_callback(user_command, nle_command);
+    } else if (!strcmp(string_builder_get_string(command), "snle")) {
+        user_command_set_callback(user_command, snle_command);
     } else {
         user_command_set_callback(user_command, undefined_command);
     }
@@ -303,6 +315,9 @@ void help_list_init(error_s *error) {
         return;
     }
 
+    user_command *command_nle = new_user_command(nle_command, (void *) descriptions[NLE]);
+    user_command *command_snle = new_user_command(snle_command, (void *) descriptions[SNLE]);
+
     commands_list = linked_list_init(command_help, 0);
     if (commands_list == NULL) {
         user_command_destroy(command_help);
@@ -316,6 +331,8 @@ void help_list_init(error_s *error) {
     linked_list_push(commands_list, command_gauss_f, 0);
     linked_list_push(commands_list, command_gauss, 0);
     linked_list_push(commands_list, command_exit, 0);
+    linked_list_push(commands_list, command_nle, 0);
+    linked_list_push(commands_list, command_snle, 0);
 }
 
 void help_list_destroy() {

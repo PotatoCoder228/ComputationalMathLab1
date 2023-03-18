@@ -2,7 +2,7 @@ project(CountMathLab1 C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_COMPILER 11)
-set(PROJECT_TARGET CountMathLab1)
+set(PROJECT_TARGET CountMathLab)
 
 cmake_minimum_required(VERSION 3.10)
 

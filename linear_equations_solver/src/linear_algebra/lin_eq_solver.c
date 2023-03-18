@@ -18,7 +18,7 @@ void print_SLAE(matrix *matrix) {
             if (j == matrix_get_columns(matrix) - 1) {
                 print(STRING, "|");
             }
-            if(i == j){
+            if (i == j) {
                 printf("  ");
             }
             print_double(m_array[i][j]);
