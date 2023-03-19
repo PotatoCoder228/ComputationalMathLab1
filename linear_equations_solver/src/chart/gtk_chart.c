@@ -11,8 +11,45 @@ typedef struct point{
     double y;
 }point;
 
-void x_to_canvas_coord(point point, double k, double can_h, double can_w){
+void draw_grid(cairo_t* cr, guint width, guint height){
+    cairo_set_line_width(cr, 0.5);
+    guint g_w, g_h;
+    g_w = 0.8*width;
+    g_h = 0.8*height;
+    int64_t step = g_w / 100;
+    cairo_set_source_rgba(cr, 0, 0, 0, 0.7);
 
+    int counter = 1;
+
+    for (guint i = (guint) (0.1 * width); i < (0.9 * width); i += step) {
+        cairo_move_to(cr, i, 0.1 * height);
+        cairo_line_to(cr, i, 0.9 * height);
+    }
+    cairo_stroke(cr);
+
+    counter = 0;
+    step = g_h / 57;
+    for (guint i = (guint) (0.5 * height); i > (guint) (0.1 * height); i -= step) {
+        counter++;
+        cairo_set_line_width(cr, 0.5);
+        if(counter%5==1){
+            cairo_set_line_width(cr, 1.5);
+        }
+        cairo_move_to(cr, 0.1 * width, i);
+        cairo_line_to(cr, 0.9 * width, i);
+        cairo_stroke(cr);
+    }
+    counter = 0;
+    for (guint i = (guint) (0.5 * height); i < (guint) (0.9 * height); i += step) {
+        counter++;
+        cairo_set_line_width(cr, 0.5);
+        if(counter%5==1){
+            cairo_set_line_width(cr, 1.5);
+        }
+        cairo_move_to(cr, 0.1 * width, i);
+        cairo_line_to(cr, 0.9 * width, i);
+        cairo_stroke(cr);
+    }
 }
 
 gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
@@ -22,52 +59,24 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
     context = gtk_widget_get_style_context(widget);
 
     GdkColor color;
-    gdk_color_parse ("#37343a", &color); //setting a color - you can also use RGB
+    gdk_color_parse ("#fff", &color); //setting a color - you can also use RGB
     gtk_widget_modify_bg(widget, GTK_STATE_NORMAL, &color);
 
     width = gtk_widget_get_allocated_width(widget);
     height = gtk_widget_get_allocated_height(widget);
 
-    double arrow_h = 0.001 * height * 20;
-    double arrow_w = 0.001 * height * 10;
-
     gtk_render_background(context, cr, 0, 0, width, height);
-    cairo_set_line_width(cr, 2);
-    //стрелочка на y
-    cairo_set_source_rgb(cr, 255, 255, 255);
-    cairo_move_to(cr, 0.1 * width, 0.09 * height);
-    cairo_line_to(cr, 0.1 * width + arrow_w, 0.1 * height + arrow_h);
-    cairo_move_to(cr, 0.1 * width, 0.09 * height);
-    cairo_line_to(cr, 0.1 * width - arrow_w, 0.1 * height + arrow_h);
-    cairo_line_to(cr, 0.1 * width + arrow_w, 0.1 * height + arrow_h);
-    cairo_fill(cr);
-
-    //стрелка на х
-    cairo_move_to(cr, 0.91 * width, 0.9 * height);
-    cairo_line_to(cr, 0.9 * width - arrow_h, 0.9 * height - arrow_w);
-    cairo_move_to(cr, 0.91 * width, 0.9 * height);
-    cairo_line_to(cr, 0.9 * width - arrow_h, 0.9 * height - arrow_w);
-    cairo_line_to(cr, 0.9 * width - arrow_h, 0.9 * height + arrow_w);
-    cairo_fill(cr);
-
     //сетка
     cairo_move_to(cr, 0.1 * width, 0.1 * height);
     cairo_line_to(cr, 0.1 * width, 0.9 * height);
     cairo_line_to(cr, 0.9 * width, 0.9 * height);
+    cairo_move_to(cr, 0.9 * width, 0.9 * height);
+    cairo_line_to(cr, 0.9 * width, 0.1 * height);
+    cairo_line_to(cr, 0.1 * width, 0.1 * height);
     cairo_stroke(cr);
-    cairo_set_line_width(cr, 0.5);
-    int64_t step = width / 100;
-    cairo_set_source_rgba(cr, 255, 255, 255, 0.7);
-    for (guint i = (guint) (0.1 * width + step); i < (0.89 * width); i += step) {
-        cairo_move_to(cr, i, 0.12 * height);
-        cairo_line_to(cr, i, 0.9 * height);
-    }
-    step = height / 57;
-    for (guint i = (guint) (0.9 * height); i > (guint) (0.12 * height); i -= step) {
-        cairo_move_to(cr, 0.1 * width, i);
-        cairo_line_to(cr, 0.89 * width, i);
-    }
-    cairo_stroke(cr);
+
+
+    draw_grid(cr, width, height);
 
     cairo_fill(cr);
     point array[5];
@@ -81,23 +90,23 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
     array[3].y = 64;
     cairo_stroke(cr);
     cairo_set_line_width(cr, 2);
-    cairo_set_source_rgba(cr, 0,50,50, 0.5);
+    cairo_set_source_rgba(cr, 255,165,0, 0.5);
     //cairo_arc (cr, width / 2.0, height / 2.0, MIN (width, height) / 2.0, 0, 2 * G_PI);
     for (size_t i = 1; i < 4; i++) {
         if(i>0) {
-            double prev_x = array[i-1].x*width/100 + (0.1 * width);
-            double prev_y = -(array[i-1].y*height/100) + (0.9*height);
-            double x = array[i].x*width/100 + (0.1 * width);
-            double y = -(array[i].y*height/100) + (0.9*height);
+            double prev_x = array[i-1].x*width/500 + (0.1 * width);
+            double prev_y = -(array[i-1].y*height/500) + (height/2);
+            double x = array[i].x*width/500 + (0.1 * width);
+            double y = -(array[i].y*height/500) + (height/2);
             cairo_move_to(cr, prev_x, prev_y);//(-(array[i-1] * array[i-1])) + (0.9 * height)
             cairo_line_to(cr, x,y);
             cairo_stroke(cr);
         }
     }
-    cairo_set_source_rgba(cr, 255, 255, 255, 0.8);
+    cairo_set_source_rgba(cr, 144, 144, 255, 0.8);
     for (size_t i = 0; i < 4; i++) {
-        double x = array[i].x*width/100 + (0.1 * width);
-        double y = -(array[i].y*height/100) + (0.9*height);
+        double x = array[i].x*width/500 + (0.1 * width);
+        double y = -(array[i].y*height/500) + (height/2);
         //array[i] + (0.1 * width), (-y)+(0.9*height),
         cairo_arc(cr, x, y,  4, 0, 2 * G_PI);
         cairo_fill(cr);
