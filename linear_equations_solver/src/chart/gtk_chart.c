@@ -17,15 +17,39 @@ void draw_grid(cairo_t* cr, guint width, guint height){
     g_w = 0.8*width;
     g_h = 0.8*height;
     int64_t step = g_w / 100;
-    cairo_set_source_rgba(cr, 0, 0, 0, 0.7);
+    cairo_set_source_rgba(cr, 255, 255, 255, 0.7);
 
-    int counter = 1;
-
-    for (guint i = (guint) (0.1 * width); i < (0.9 * width); i += step) {
+    int counter = 0;
+    for (guint i = (guint) (0.5 * width); i < (0.9 * width); i += step) {
+        counter++;
+        cairo_set_line_width(cr, 0.5);
+        if(counter%5==1){
+            cairo_set_line_width(cr, 1.5);
+            cairo_move_to(cr, i - 5, 0.92 * height);
+            cairo_set_font_size(cr, 12);
+            cairo_show_text(cr, g_strdup_printf("%i", step * (counter - 1)));
+        }
         cairo_move_to(cr, i, 0.1 * height);
         cairo_line_to(cr, i, 0.9 * height);
+        cairo_stroke(cr);
     }
-    cairo_stroke(cr);
+
+    counter = 0;
+    for (guint i = (guint) (0.5 * width); i > (0.1 * width); i -= step) {
+        counter++;
+        cairo_set_line_width(cr, 0.5);
+        if(counter%5==1){
+            cairo_set_line_width(cr, 1.5);
+            if(counter!= 1) {
+                cairo_move_to(cr, i - 6, 0.92 * height);
+                cairo_set_font_size(cr, 12);
+                cairo_show_text(cr, g_strdup_printf("-%i", step * (counter - 1)));
+            }
+        }
+        cairo_move_to(cr, i, 0.1 * height);
+        cairo_line_to(cr, i, 0.9 * height);
+        cairo_stroke(cr);
+    }
 
     counter = 0;
     step = g_h / 57;
@@ -34,6 +58,9 @@ void draw_grid(cairo_t* cr, guint width, guint height){
         cairo_set_line_width(cr, 0.5);
         if(counter%5==1){
             cairo_set_line_width(cr, 1.5);
+            cairo_move_to(cr, 0.06*width, i);
+            cairo_set_font_size(cr, 12);
+            cairo_show_text(cr, g_strdup_printf("%i", step * (counter - 1)));
         }
         cairo_move_to(cr, 0.1 * width, i);
         cairo_line_to(cr, 0.9 * width, i);
@@ -45,6 +72,11 @@ void draw_grid(cairo_t* cr, guint width, guint height){
         cairo_set_line_width(cr, 0.5);
         if(counter%5==1){
             cairo_set_line_width(cr, 1.5);
+            if(counter!= 1) {
+                cairo_move_to(cr, 0.05 * width, i);
+                cairo_set_font_size(cr, 12);
+                cairo_show_text(cr, g_strdup_printf("-%i", step * (counter - 1)));
+            }
         }
         cairo_move_to(cr, 0.1 * width, i);
         cairo_line_to(cr, 0.9 * width, i);
@@ -59,7 +91,7 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
     context = gtk_widget_get_style_context(widget);
 
     GdkColor color;
-    gdk_color_parse ("#fff", &color); //setting a color - you can also use RGB
+    gdk_color_parse ("#777", &color); //setting a color - you can also use RGB
     gtk_widget_modify_bg(widget, GTK_STATE_NORMAL, &color);
 
     width = gtk_widget_get_allocated_width(widget);
@@ -67,6 +99,7 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
 
     gtk_render_background(context, cr, 0, 0, width, height);
     //сетка
+    cairo_set_source_rgb(cr, 255,255,255);
     cairo_move_to(cr, 0.1 * width, 0.1 * height);
     cairo_line_to(cr, 0.1 * width, 0.9 * height);
     cairo_line_to(cr, 0.9 * width, 0.9 * height);
@@ -75,8 +108,23 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
     cairo_line_to(cr, 0.1 * width, 0.1 * height);
     cairo_stroke(cr);
 
+    cairo_select_font_face(cr, "Courier",
+                           CAIRO_FONT_SLANT_NORMAL,
+                           CAIRO_FONT_WEIGHT_BOLD);
 
     draw_grid(cr, width, height);
+
+    cairo_set_line_width(cr, 2);
+    cairo_set_source_rgba(cr, 0,50,50, 1);
+    cairo_move_to(cr, 0.87*width, 0.045*height);
+    cairo_line_to(cr, 0.89*width, 0.045*height);
+    cairo_stroke(cr);
+
+    cairo_set_source_rgba(cr, 255,255,255, 1);
+    cairo_move_to (cr, 0.9*width, 0.05*height);
+    cairo_set_font_size(cr, 15);
+    cairo_show_text(cr, "y = x^2");
+    cairo_stroke(cr);
 
     cairo_fill(cr);
     point array[5];
@@ -90,23 +138,23 @@ gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
     array[3].y = 64;
     cairo_stroke(cr);
     cairo_set_line_width(cr, 2);
-    cairo_set_source_rgba(cr, 255,165,0, 0.5);
+    cairo_set_source_rgba(cr, 0,50,50, 1);
     //cairo_arc (cr, width / 2.0, height / 2.0, MIN (width, height) / 2.0, 0, 2 * G_PI);
     for (size_t i = 1; i < 4; i++) {
         if(i>0) {
-            double prev_x = array[i-1].x*width/500 + (0.1 * width);
-            double prev_y = -(array[i-1].y*height/500) + (height/2);
-            double x = array[i].x*width/500 + (0.1 * width);
-            double y = -(array[i].y*height/500) + (height/2);
+            double prev_x = array[i-1].x*width/300 + (0.5 * width);
+            double prev_y = -(array[i-1].y*height/300) + (height/2);
+            double x = array[i].x*width/300 + (0.5 * width);
+            double y = -(array[i].y*height/300) + (height/2);
             cairo_move_to(cr, prev_x, prev_y);//(-(array[i-1] * array[i-1])) + (0.9 * height)
             cairo_line_to(cr, x,y);
             cairo_stroke(cr);
         }
     }
-    cairo_set_source_rgba(cr, 144, 144, 255, 0.8);
+    cairo_set_source_rgba(cr, 0,50,50, 1);
     for (size_t i = 0; i < 4; i++) {
-        double x = array[i].x*width/500 + (0.1 * width);
-        double y = -(array[i].y*height/500) + (height/2);
+        double x = array[i].x*width/300 + (0.5 * width);
+        double y = -(array[i].y*height/300) + (height/2);
         //array[i] + (0.1 * width), (-y)+(0.9*height),
         cairo_arc(cr, x, y,  4, 0, 2 * G_PI);
         cairo_fill(cr);
@@ -122,7 +170,7 @@ G_MODULE_EXPORT void on_destroy() {
 void main_win_set_parameteres(GtkWidget *main_window, GError *error) {
     gtk_window_set_title(GTK_WINDOW (main_window), "ChartBuilder");
     gtk_window_set_icon_from_file(GTK_WINDOW (main_window),
-                                  "/mnt/c/Users/sasha/Download/CountMathLabs/linear_equations_solver/resources/icons/chart_logo.png",
+                                  "/home/potato_coder/Рабочий стол/CountMathLabs/linear_equations_solver/resources/icons/chart_logo.png",
                                   &error);
     gtk_window_set_default_size(GTK_WINDOW (main_window), 1280, 720);
 }
@@ -130,7 +178,7 @@ void main_win_set_parameteres(GtkWidget *main_window, GError *error) {
 bool win_init(GtkBuilder *builder, GError *error) {
     GtkWidget *window;
     if (!gtk_builder_add_from_file(builder,
-                                   "/mnt/c/Users/sasha/Download/CountMathLabs/linear_equations_solver/resources/glade_templates/main.glade",
+                                   "/home/potato_coder/Рабочий стол/CountMathLabs/linear_equations_solver/resources/glade_templates/main.glade",
                                    &error)) {
         g_critical ("Не вышло загрузить файл с UI : %s", error->message);
         g_error_free(error);
